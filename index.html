@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Scanner de tickets couture</title>
+
+  <!-- META SEO -->
+  <meta
+    name="description"
+    content="Scannez vos tickets de tissu et mercerie, organisez vos tenues de couture et calculez automatiquement vos coûts. Application simple, mobile et imprimable."
+  />
+  <meta
+    name="keywords"
+    content="scanner ticket tissu, couture, mercerie, gestion tissu, planificateur couture, OCR ticket, PWA couture"
+  />
+  <meta name="author" content="Tissu Planner" />
+
+  <!-- META OPEN GRAPH -->
+  <meta property="og:title" content="Scanner de tickets couture" />
+  <meta
+    property="og:description"
+    content="Application web pour scanner des tickets de tissu, organiser ses tenues et calculer automatiquement les coûts."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ton-site.github.io/tissu-planner/" />
+  <meta property="og:image" content="assets/icons/icon-512x512.png" />
+  <meta property="og:site_name" content="Tissu Planner" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#e84393" />
+
+  <!-- ICON -->
+  <link rel="icon" href="assets/icons/icon-192x192.png" type="image/png" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<h1>Scanner un ticket</h1>
+<button id="installButton" style="display:none;">
+  📲 Installer l’application
+</button>
+
+
+<input type="file" id="ticketInput" accept="image/*" capture="environment">
+
+<div class="tenue-container">
+
+  <div class="tenue-title" contenteditable>
+    ✂️ Nom de la tenue
+  </div>
+
+  <table class="tenue-table" id="ticketTable">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Référence</th>
+        <th>Largeur (cm)</th>
+        <th>Hauteur (cm) / Quantité</th>
+        <th>Prix</th>
+        <th>Prix au m² / unité</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+     <tr>
+  <td contenteditable="true"></td> <!-- Nom -->
+  <td contenteditable="true"></td> <!-- Référence -->
+  <td contenteditable="true"></td> <!-- Largeur -->
+  <td contenteditable="true"></td> <!-- Hauteur / Qté -->
+  <td contenteditable="true" class="prixCalcule"></td> <!-- Prix -->
+  <td contenteditable="true"></td> <!-- Prix au m² -->
+  <td>
+    <button class="duplicate-row">📄</button>
+    <button class="delete-row">🗑️</button>
+  </td>
+</tr>
+
+    </tbody>
+
+    <tfoot>
+      <tr>
+        <td colspan="4" class="total-label">TOTAL DE LA TENUE</td>
+        <td id="totalPrice" class="prixCalcule">0.00 €</td>
+        <td colspan="2"></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <button class="add-row">➕ Ajouter une ligne</button>
+</div>
+<button id="sendToSheet">💾 Enregistrer dans Sheets</button>
+</div>
+<!-- <pre id="ocrDebug"></pre> -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="assets/js/parser.js"></script>
+<script src="assets/js/form.js"></script>
+<script src="assets/js/ocr.js"></script>
+<script src="assets/js/install.js"></script>
+</body>
+</html>

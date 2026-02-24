@@ -1,0 +1,112 @@
+:root {
+  --primary: #e84393;
+  --secondary: #6c5ce7;
+  --bg: #fdfdfd;
+  --border: #dcdde1;
+  --header: linear-gradient(135deg, #e84393, #6c5ce7);
+}
+
+body {
+  background: radial-gradient(circle at top, #ffeaa7, #ffffff);
+  font-family: "Segoe UI", sans-serif;
+  padding: 40px;
+}
+
+.tenue-container {
+  max-width: 1200px;
+  margin: auto;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+}
+
+.tenue-title {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  background: var(--header);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 15px;
+  outline: none;
+}
+
+.tenue-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tenue-table th {
+  background: var(--header);
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.tenue-table td {
+  border: 1px solid var(--border);
+  padding: 10px;
+  text-align: center;
+  min-width: 90px;
+}
+
+.tenue-table td[contenteditable] {
+  background: #fafafa;
+  cursor: text;
+}
+
+.tenue-table td[contenteditable]:focus {
+  outline: none;
+  background: #fff3f7;
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.prixCalcule {
+  font-weight: bold;
+  color: var(--secondary);
+  background: #f0f0ff;
+}
+
+.delete-row {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.delete-row:hover {
+  transform: scale(1.3);
+}
+
+.add-row {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  background: var(--header);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.add-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+tfoot td {
+  font-size: 1.1rem;
+  padding: 15px;
+  background: #f8f8ff;
+}
+
+.total-label {
+  text-align: right;
+  font-weight: bold;
+  color: #333;
+}
