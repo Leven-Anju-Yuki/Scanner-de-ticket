@@ -1,0 +1,15 @@
+backups/
+node_modules/
+.clasprc.json
+.clasprc.*.json
+.env
+.env.*
+.clasp.json
+.npm-cache/
+*.clasp.json
+.ocr-cache/
+google-apps-script/release/PrivateConfig.js
+google-apps-script/remote/
+google-apps-script/release/
+.agents/
+.codex/

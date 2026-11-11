@@ -1,0 +1,17 @@
+{
+  "name": "scanner-tickets-couture",
+  "private": true,
+  "scripts": {
+    "test": "node tests/regression.cjs && node tests/parser.cjs && node tests/ocr.cjs && node tests/apps-script.cjs && node tests/send-to-sheets.cjs && node tests/google-auth.cjs && node tests/history.cjs && node tests/pwa.cjs",
+    "test:ocr-image": "node tests/recognize-image.cjs",
+    "clasp": "clasp",
+    "google:login": "clasp login",
+    "google:status": "clasp show-authorized-user",
+    "google:pull": "node tools/google-pull.cjs",
+    "google:prepare": "node tools/google-prepare.cjs"
+  },
+  "devDependencies": {
+    "@google/clasp": "3.4.1",
+    "tesseract.js": "5.1.1"
+  }
+}

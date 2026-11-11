@@ -24,45 +24,71 @@
     content="Application web pour scanner des tickets de tissu, organiser ses tenues et calculer automatiquement les coûts."
   />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://ton-site.github.io/tissu-planner/" />
-  <meta property="og:image" content="assets/icons/icon-512x512.png" />
+  <meta property="og:url" content="https://leven-anju-yuki.github.io/Scanner-de-ticket/" />
+  <meta property="og:image" content="assets/image/icon-512.png" />
   <meta property="og:site_name" content="Tissu Planner" />
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#e84393" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-icon" href="assets/image/icon-192.png" />
 
   <!-- ICON -->
-  <link rel="icon" href="assets/icons/icon-192x192.png" type="image/png" />
-
+  <link rel="icon" href="assets/image/favicon_pref_2.png" type="image/png" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- CSS -->
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
 
-<h1>Scanner un ticket</h1>
+<h1>Gestion des Tickets de Tissu</h1>
 <button id="installButton" style="display:none;">
   📲 Installer l’application
 </button>
+<p id="installHelp" class="scan-help"></p>
+<button id="updateApp" type="button" hidden>Actualiser l’application (saisie conservée)</button>
+<p id="networkStatus" role="status" aria-live="polite"></p>
 
 
-<input type="file" id="ticketInput" accept="image/*" capture="environment">
 
 <div class="tenue-container">
-
+  <div class="scan-actions">
+    <label class="scan-choice">📷 Photographier un ticket<input type="file" id="ticketInput" accept="image/*" capture="environment"></label>
+    <label class="scan-choice">🖼️ Choisir une photo<input type="file" id="ticketGallery" accept="image/*"></label>
+  </div>
+  <p class="scan-help">Photographie un ticket net, à plat et bien éclairé. Les articles proposés resteront modifiables ; rien ne sera envoyé automatiquement.</p>
+  <img id="ticketPreview" alt="Ticket sélectionné pour vérifier la lecture" hidden>
+  <p id="ocrDebug" role="status" aria-live="polite"></p>
+  <details id="ocrResult" hidden>
+    <summary>Voir le texte lu et les points à vérifier</summary>
+    <ul id="ocrWarnings"></ul>
+    <pre id="ocrText"></pre>
+  </details>
+<br><br>
   <div class="tenue-title" contenteditable>
     ✂️ Nom de la tenue
   </div>
+  <details id="historyPanel">
+    <summary>Retrouver une tenue existante et éviter les doublons</summary>
+    <p>Connecte-toi avec ton compte Google pour retrouver tes tableaux. Sur téléphone, ton PC peut être éteint.</p>
+    <button id="historyConnect" type="button" disabled>Se connecter avec Google</button>
+    <button id="historyDisconnect" type="button" hidden>Se déconnecter</button>
+    <p id="historyStatus" role="status" aria-live="polite"></p>
+    <div id="historyMatches"></div>
+    <div id="historyExisting"></div>
+  </details>
 
-  <table class="tenue-table" id="ticketTable">
+  <p class="scan-help">Fais glisser le tableau vers la gauche pour voir tous les prix. Le mode paysage offre plus de place.</p>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Articles modifiables, défilement horizontal"><table class="tenue-table" id="ticketTable">
     <thead>
       <tr>
         <th>Nom</th>
         <th>Référence</th>
         <th>Largeur (cm)</th>
         <th>Hauteur (cm) / Quantité</th>
-        <th>Prix</th>
         <th>Prix au m² / unité</th>
+        <th>Prix</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -73,8 +99,8 @@
   <td contenteditable="true"></td> <!-- Référence -->
   <td contenteditable="true"></td> <!-- Largeur -->
   <td contenteditable="true"></td> <!-- Hauteur / Qté -->
-  <td contenteditable="true" class="prixCalcule"></td> <!-- Prix -->
   <td contenteditable="true"></td> <!-- Prix au m² -->
+  <td contenteditable="true" class="prixCalcule"></td> <!-- Prix -->
   <td>
     <button class="duplicate-row">📄</button>
     <button class="delete-row">🗑️</button>
@@ -85,23 +111,29 @@
 
     <tfoot>
       <tr>
-        <td colspan="4" class="total-label">TOTAL DE LA TENUE</td>
+        <td colspan="5" class="total-label">TOTAL DE LA TENUE</td>
         <td id="totalPrice" class="prixCalcule">0.00 €</td>
-        <td colspan="2"></td>
+        <td></td>
       </tr>
     </tfoot>
-  </table>
+  </table></div>
 
-  <button class="add-row">➕ Ajouter une ligne</button>
+  <button class="add-row">➕ Ajouter une ligne</button><br>
+<p id="ocrReviewPanel" hidden><label><input type="checkbox" id="ocrReviewed"> J’ai vérifié les articles et les montants avec le ticket.</label></p>
+<button onclick="sendToSheets()" id="sendToSheet">💾 Enregistrer dans Sheets</button>
+<p id="saveStatus" role="status" aria-live="polite"></p>
+<a id="openSheet" href="https://docs.google.com/spreadsheets/d/1jdgbpLBnvWIhoYqL_-Ut31sG_1NhxqSIePDb9H6hwi0/edit#gid=0" target="_blank" rel="noopener" hidden>Ouvrir mon tableau dans Google Sheets</a>
 </div>
-<button id="sendToSheet">💾 Enregistrer dans Sheets</button>
-</div>
-<!-- <pre id="ocrDebug"></pre> -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="assets/js/parser.js"></script>
+<script src="assets/js/history-core.js"></script>
 <script src="assets/js/form.js"></script>
+<script src="assets/js/history.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer onload="CoutureHistory.initGoogle()"></script>
 <script src="assets/js/ocr.js"></script>
+<script src="assets/js/draft.js"></script>
 <script src="assets/js/install.js"></script>
 </body>
 </html>

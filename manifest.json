@@ -3,18 +3,20 @@
   "short_name": "TissuPlanner",
   "description": "Scanner des tickets de tissu, organiser ses tenues et calculer les coûts.",
   "start_url": "./index.html",
+  "id": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#e84393",
   "lang": "fr",
   "icons": [
     {
-      "src": "assets/icons/icon-192x192.png",
+      "src": "assets/image/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/icon-512x512.png",
+      "src": "assets/image/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

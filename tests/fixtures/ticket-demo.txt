@@ -1,0 +1,9 @@
+MERCERIE - TICKET DE TEST
+Article: Tissu coton
+Ref: 001234
+Laize: 140 cm
+1,50 m x 5,99 EUR 8,99 EUR
+Article: Boutons nacre
+Ref: BTN-05
+5 x 2,00 EUR 10,00 EUR
+TOTAL 18,99 EUR

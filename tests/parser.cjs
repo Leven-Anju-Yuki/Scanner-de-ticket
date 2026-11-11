@@ -1,0 +1,45 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const context = vm.createContext({});
+vm.runInContext(fs.readFileSync('assets/js/parser.js', 'utf8'), context);
+const parse = text => context.parseReceipt(text);
+const demo = parse(fs.readFileSync('tests/fixtures/ticket-demo.txt', 'utf8'));
+assert.equal(demo.articles.length, 2);
+assert.deepEqual(JSON.parse(JSON.stringify(demo.articles.map(a => [a.nom, a.reference, a.largeur, a.taille, a.prixUnitaire, a.prix]))),
+  [['Tissu coton', '001234', '140', '150', '5.99', '8.99'],
+   ['Boutons nacre', 'BTN-05', '', '5', '2', '10']]);
+assert.equal(parse('TOTAL 99,00 EUR\nTVA 20,00 EUR\nCARTE 99,00 EUR').articles.length, 0);
+assert.equal(parse('Boutons nacre 10,00\nQte: 5\nPU 2,00\nTOTAL 10,00').articles[0].prixUnitaire, '2');
+assert.equal(parse('Boutons nacre 10,00\nQté: 5\nPU 2,00').articles[0].taille, '5');
+assert.equal(parse('Article: Boutons\nQuantité: 5\nPrix payé: 10,00').articles[0].taille, '5');
+assert.equal(parse('Article: Boutons\nRéf.: BTN-01\nPrix payé: 10,00').articles[0].reference, 'BTN-01');
+assert.equal(parse('000123 TISSU BLEU 8,99\n1,50 m x 5,99 8,99').articles[0].reference, '000123');
+const beforeName = parse('Ref: 009876\nTISSU ROUGE 8,99\n1,50 m x 5,99 8,99');
+assert.equal(beforeName.articles.length, 1);
+assert.equal(beforeName.articles[0].reference, '009876');
+assert.equal(beforeName.articles[0].nom, 'TISSU ROUGE');
+assert.equal(parse('Article: Ruban\nLargeur: 2 cm\nLongueur: 150 cm\nPrix payé: 3,00').articles[0].taille, '150');
+assert.equal(parse('Article: Tissu\nLongueur: 1,13 m\nPrix payé: 3,00').articles[0].taille, '113');
+assert.equal(parse('Article: Tissu\n140 cm\nPrix payé: 8,99').articles[0].largeur, '');
+const noPaid = parse('Article: Tissu\nLongueur: 150 cm\nPrix au m²: 5,99');
+assert.equal(noPaid.articles[0].prix, '');
+assert.equal(noPaid.articles[0].prixUnitaire, '5.99');
+const ambiguous = parse('Article: Ruban\nLargeur: 2 cm\nLargeur: 3 cm\nPrix payé: 4,00');
+assert.equal(ambiguous.articles[0].largeur, '');
+assert.ok(ambiguous.articles[0].warnings.some(w => w.includes('plusieurs valeurs')));
+const discount = parse('TISSU 9,00\nRemise -1,00\nTOTAL 8,00');
+assert.equal(discount.articles[0].prix, '');
+assert.ok(discount.articles[0].warnings.some(w => w.includes('Remise')));
+assert.equal(parse('TISSU 9,00\nRemise -1,00\nPrix payé: 8,00').articles[0].prix, '8');
+const unknownUnit = parse('TISSU 8,99\n1,50 x 5,99 8,99');
+assert.equal(unknownUnit.articles[0].taille, '');
+const small = parse('Article: Tissu\n30 cm x 5,99 1,80');
+assert.ok(small.articles[0].warnings.some(w => w.includes('moins de 50')));
+const total = parse('BOUTONS 10,00\n5 x 2,00 10,00\nTOTAL 12,00');
+assert.ok(total.warnings.some(w => w.includes('diffère')));
+const repeated = parse('BOUTONS 2,00\n1 x 2,00 2,00\nBOUTONS 2,00\n1 x 2,00 2,00');
+assert.equal(repeated.articles.length, 2); // Deux achats identiques restent distincts.
+const low = context.parseReceipt('BOUTONS 2,00\n1 x 2,00 2,00', 45);
+assert.ok(low.articles[0].warnings.some(w => w.includes('peu fiable')));
+console.log('OK : tickets multi-articles, références, mesures, tarifs, prix payés, remises et incertitudes.');
