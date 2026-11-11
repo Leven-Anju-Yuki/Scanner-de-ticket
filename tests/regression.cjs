@@ -34,6 +34,6 @@ manifest.icons.forEach(icon => assert.ok(fs.existsSync(icon.src)));
 const swContext = {self: {addEventListener() {}}};
 vm.createContext(swContext);
 vm.runInContext(fs.readFileSync("sw.js", "utf8") + "\nFILES_TO_CACHE.forEach(path => { if (!exists(path)) throw new Error(path); });",
-  vm.createContext({...swContext, exists: fs.existsSync}));
+  vm.createContext({...swContext, exists: path => fs.existsSync(path.split("?")[0])}));
 for (const file of ["form", "parser", "ocr", "install"]) new vm.Script(fs.readFileSync("assets/js/" + file + ".js", "utf8"));
 console.log("OK : calcul, seuil 50, prix manuel, total, extraction prudente, icônes et précache.");
