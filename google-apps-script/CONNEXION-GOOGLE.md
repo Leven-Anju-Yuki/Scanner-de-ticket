@@ -9,8 +9,14 @@ Le client **Scanner de tickets Web** a été créé le 11 novembre 2026 dans ce
 projet indépendant, avec l'origine `https://leven-anju-yuki.github.io`.
 Son identifiant public est intégré dans `Code.gs` (`GOOGLE_WEB_CLIENT_ID`).
 La propriété `GOOGLE_OAUTH_CLIENT_ID` peut le remplacer si nécessaire.
-La version locale est préparée ; la publication et une connexion réelle restent
-à vérifier. Ne pas recréer de client pour finir cette installation.
+Le site est publié sur GitHub Pages et le déploiement Apps Script existant a été
+mis à jour. Ne pas recréer de client pour finir cette installation.
+
+Après ajout de la permission d'appels Google, le propriétaire doit exécuter
+`authorizeGoogleConnection` dans l'éditeur Apps Script et terminer le consentement.
+Ce diagnostic ne modifie pas Sheets. Une simple exécution de `doGet` ne suffit pas
+à déclencher la nouvelle autorisation. Revenir ensuite sur le site et se connecter.
+La connexion complète doit être vérifiée après ce consentement.
 
 Les étapes ci-dessous décrivent une future reconfiguration éventuelle.
 

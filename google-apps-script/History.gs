@@ -7,9 +7,12 @@ function authorizeHistory(data) {
       data.googleAccessToken.length > 4096 || /[\r\n]/.test(data.googleAccessToken))
     throw new Error("Connecte-toi avec Google pour accéder aux tableaux.");
   // Google vérifie le jeton OAuth ; aucune identité fournie par le navigateur n'est crue.
-  const response = UrlFetchApp.fetch("https://openidconnect.googleapis.com/v1/userinfo", {
-    headers: { Authorization: "Bearer " + data.googleAccessToken }, muteHttpExceptions: true
-  });
+  let response;
+  try {
+    response = UrlFetchApp.fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      headers: { Authorization: "Bearer " + data.googleAccessToken }, muteHttpExceptions: true
+    });
+  } catch (_) { throw new Error("Le propriétaire doit autoriser les appels Google du script mis à jour."); }
   if (response.getResponseCode() !== 200) throw new Error("Connexion Google expirée ou refusée. Reconnecte-toi.");
   const identity = JSON.parse(response.getContentText());
   const owner = Session.getEffectiveUser().getEmail().toLowerCase();
