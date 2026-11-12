@@ -1,4 +1,14 @@
 // Analyse locale prudente : aucune requête réseau, aucune valeur manquante inventée.
+function cleanProductName(value) {
+  // Cette règle ne s'applique qu'au nom proposé par l'OCR. Le texte source,
+  // les références et les valeurs numériques restent intacts.
+  const letters = { 0: "O", 1: "I", 2: "Z", 3: "E", 4: "A", 5: "S", 6: "G", 7: "T", 8: "B", 9: "G" };
+  return String(value || "").replace(/[\p{L}\d]+/gu, word => {
+    if ((word.match(/\p{L}/gu) || []).length < 3 || /\d{2,}/.test(word)) return word;
+    return word.replace(/\d/g, digit => letters[digit]);
+  }).replace(/\b\d+(?:[.,]\d+)?\s*(?:mm|cm|m|pes|gr|ny)\b/gi, " ")
+    .replace(/\d/g, "").replace(/\s+/g, " ").trim();
+}
 function parseReceipt(text, confidence = 100) {
   const lines = String(text || "").replace(/\u00a0/g, " ").replace(/[×✕]/g, "x")
     .split(/\r?\n/).map(line => line.trim().replace(/\s+/g, " ")).filter(Boolean);
@@ -117,9 +127,10 @@ function parseReceipt(text, confidence = 100) {
       warnings.push("Remise détectée : le prix réellement payé doit être vérifié.");
     }
     const article = {
-      nom: block.name, reference: unique(refs, "Référence"), largeur: unique(width, "Largeur"),
+      nom: cleanProductName(block.name), reference: unique(refs, "Référence"), largeur: unique(width, "Largeur"),
       taille, prixUnitaire: unique(rates, "Tarif"), prix, warnings, source, ocr: true
     };
+    if (article.nom !== block.name) warnings.push("Nom nettoyé des chiffres : vérifier les lettres avec le ticket.");
     if (!article.nom) warnings.push("Nom non reconnu.");
     if (!article.reference) warnings.push("Référence non reconnue.");
     if (!article.taille) warnings.push("Longueur / quantité non reconnue.");
@@ -183,9 +194,10 @@ function parseStructuredReceipt(lines, confidence) {
       } else warnings.push("Tarif ou prix payé incomplet : vérifier la ligne du ticket.");
     } else warnings.push("Longueur ou quantité non reconnue.");
     const secondary = rest.slice(0, multiplication?.index ?? rest.length).trim();
-    const article = { nom: name, reference: ref ? ref[1] : secondary,
+    const article = { nom: cleanProductName(name), reference: ref ? ref[1] : secondary,
       largeur: width ? width[1] : millimetres ? String(Number(millimetres[1].replace(",", ".")) / 10) : "",
       taille, prixUnitaire: tarif, prix: paid, source, warnings, ocr: true };
+    if (article.nom !== name) warnings.push("Nom nettoyé des chiffres : vérifier les lettres avec le ticket.");
     if (ref && secondary) warnings.push("Code secondaire conservé dans le texte lu : " + secondary);
     if (!article.largeur && /tissu|polaire|viscose|guipure|dentelle|burlington/i.test(name)) warnings.push("Largeur à vérifier sur la photo.");
     if (taille && tarif && paid) {

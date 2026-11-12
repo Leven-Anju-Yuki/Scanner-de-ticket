@@ -238,3 +238,62 @@ button:disabled { opacity: .6; cursor: wait; }
 @media print {
   #ticketPreview, #ocrResult, #ocrReviewPanel, .scan-help, #saveStatus, #openSheet { display: none !important; }
 }
+
+/* Parcours téléphone : étapes lisibles et commandes tactiles. */
+body { margin: 0; padding: 24px; background: #f5f1e7; }
+.app-header { max-width: 1200px; margin: 0 auto 22px; }
+.app-header h1 { font-size: clamp(1.6rem, 3vw, 2.5rem); text-align: left; margin: 5px 0 8px; letter-spacing: 0; text-shadow: none; }
+.app-header p { margin: 6px 0; color: #615746; }
+.eyebrow { font-size: .72rem; letter-spacing: .18em; font-weight: 700; }
+.tenue-container { padding: 24px; box-shadow: 0 8px 28px #332b1b0c; border-color: #e2d8bf; }
+.step-heading { display: flex; align-items: center; gap: 10px; margin: 28px 0 14px; font-size: 1.15rem; }
+.step-heading:first-child { margin-top: 0; }
+.step-heading > span { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--black); color: var(--gold-light); font-size: .9rem; }
+.scan-choice { position: relative; display: flex; align-items: center; gap: 16px; min-height: 90px; padding: 18px; background: white; border: 1px solid #ddcfa7; border-radius: 14px; cursor: pointer; }
+.scan-choice:focus-within { outline: 3px solid #b08b24; outline-offset: 3px; }
+.scan-choice:has(input:disabled) { opacity: .5; }
+.scan-choice .scan-icon { font-size: 2rem; }
+.scan-choice strong, .scan-choice small { display: block; }
+.scan-choice small { margin-top: 6px; color: #71644c; font-size: .85rem; }
+.scan-choice input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; }
+.field-help, .scan-help { color: #6e6453; line-height: 1.5; }
+.field-help { font-size: .85rem; margin: 6px 0; }
+.tenue-title { font-size: 1.5rem; padding: 16px 20px; margin: 10px 0 16px; border-radius: 12px; }
+#historyPanel { background: #fffdf7; border: 1px solid #ded4be; border-radius: 12px; padding: 4px 14px; }
+#historyPanel summary { font-weight: 600; line-height: 1.4; }
+.table-scroll { border: 1px solid #ded4be; border-radius: 12px; }
+.tenue-table { margin-top: 0; }
+.tenue-table th { padding: 14px 10px; font-size: .85rem; }
+.tenue-table td { line-height: 1.45; }
+.tenue-table tbody td:first-child { min-width: 155px; text-align: left; }
+#ocrDebug:not(:empty) { background: #fff3ce; color: #624a10; border-radius: 10px; padding: 12px 15px; line-height: 1.5; }
+#ocrReviewPanel { background: #fff8df; padding: 16px; }
+#ocrReviewPanel label { display: flex; gap: 12px; align-items: center; line-height: 1.5; }
+#ocrReviewed { width: 22px; height: 22px; flex-shrink: 0; accent-color: #8b6a12; }
+.save-panel { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #ddd3bc; }
+.save-caption { font-weight: 600; }
+.save-caption small { display: block; font-size: .8rem; font-weight: normal; color: #71644c; margin-top: 4px; }
+.save-panel #sendToSheet { margin-top: 0; }
+.rotate-prompt { display: none; }
+@media screen and (pointer: coarse) and (max-width: 1100px) and (orientation: portrait) {
+  body { overflow: hidden; }
+  .rotate-prompt { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; padding: 24px; background: #f5f1e7; overflow: auto; }
+  .rotate-card { text-align: center; max-width: 370px; padding: 28px 22px; border: 1px solid #d9caa3; background: #fffdf7; border-radius: 22px; }
+  .rotate-icon { font-size: 4.5rem; line-height: 1; color: #9c781d; }
+  .rotate-card h2 { font-size: 1.5rem; }
+  .rotate-card p { color: #685c46; line-height: 1.6; }
+  .rotate-card button { width: 100%; padding: 15px; border: 0; border-radius: 12px; background: #171510; color: #f3d67a; font-size: 1rem; }
+}
+@media (max-width: 1000px) and (orientation: landscape) {
+  body { padding: 12px max(12px, env(safe-area-inset-right)) 20px max(12px, env(safe-area-inset-left)); }
+  .app-header { margin-bottom: 14px; }
+  .app-header h1 { font-size: 1.6rem; }
+  .tenue-container { padding: 18px; }
+  .scan-actions { flex-wrap: nowrap; }
+  .scan-choice { flex-basis: 0; min-height: 76px; padding: 14px; }
+  .save-panel #sendToSheet { width: auto; }
+}
+@media print {
+  .app-header, .step-heading, .field-help, .rotate-prompt, #historyPanel, .save-panel, #installHelp, #networkStatus { display: none !important; }
+  .table-scroll { border: 0; }
+}

@@ -43,3 +43,13 @@ assert.equal(repeated.articles.length, 2); // Deux achats identiques restent dis
 const low = context.parseReceipt('BOUTONS 2,00\n1 x 2,00 2,00', 45);
 assert.ok(low.articles[0].warnings.some(w => w.includes('peu fiable')));
 console.log('OK : tickets multi-articles, références, mesures, tarifs, prix payés, remises et incertitudes.');
+
+const lettersOnly = parse('Article: P0LA1RE NO1R 123\nRéf: A0150-28\nLargeur: 140 cm\nLongueur: 1,50 m\nPrix unitaire: 9,99\nPrix payé: 14,99').articles[0];
+assert.equal(lettersOnly.nom, 'POLAIRE NOIR');
+assert.deepEqual([lettersOnly.reference,lettersOnly.largeur,lettersOnly.taille,lettersOnly.prixUnitaire,lettersOnly.prix],['A0150-28','140','150','9.99','14.99']);
+assert.ok(lettersOnly.source.includes('P0LA1RE NO1R 123'));
+assert.ok(lettersOnly.warnings.some(w=>w.includes('Nom nettoyé')));
+const six = parse(fs.readFileSync('tests/fixtures/ticket-six-articles.txt','utf8'));
+assert.equal(six.articles.length,6);assert.equal(six.total,90.38);
+assert.ok(six.articles.every(a=>!/[0-9]/.test(a.nom)));
+console.log('OK : lettres dans les noms OCR, chiffres des références/mesures/prix intacts, six articles et 90,38 euros.');
