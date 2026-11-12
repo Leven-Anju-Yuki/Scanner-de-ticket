@@ -30,24 +30,20 @@ var CoutureHistory = (function () {
       byId("historyReload").hidden = false;
       byId("historyDisconnect").hidden = false;
       if (selected) selected = outfits.find(o => o.id === selected.id) || null;
-      byId("historyStatus").textContent = "Connecté à Google · " + outfits.length + " tableaux vérifiés. Ton ticket reste la nouvelle saisie ; compare seulement si une correspondance t’intéresse.";
+      byId("historyStatus").textContent = "Connecté à Google · " + outfits.length + " tenues disponibles. La recherche utilise uniquement le nom de ta tenue, jamais les tissus des autres projets.";
       renderMatches(); refresh();
     } catch (error) { if (version === sessionVersion) byId("historyStatus").textContent = "Historique indisponible : " + error.message; }
   }
   function renderMatches() {
     const name = document.querySelector(".tenue-title").textContent.replace(/^✂️\s*/, "").trim();
     const target = byId("historyMatches"); target.replaceChildren();
-    const rows = canonicalRows().filter(row => row[0] || row[1]);
     const named = name && name !== "Nom de la tenue";
-    const matches = outfits.map(outfit => ({ outfit,
-      score: named ? Couture.nameScore(name, outfit.name) : 0,
-      count: rows.filter(row => Couture.duplicates(row, outfit.rows).length).length
-    })).filter(match => match.count || match.score >= 0.55)
-      .sort((a, b) => b.count - a.count || b.score - a.score).slice(0, 5);
+    const matches = named ? outfits.map(outfit => ({ outfit, score: Couture.nameScore(name, outfit.name) }))
+      .filter(match => match.score >= 0.55).sort((a, b) => b.score - a.score).slice(0, 5) : [];
     byId("duplicateSuggestions").hidden = !matches.length;
-    matches.forEach(({ outfit, count }) => {
+    matches.forEach(({ outfit }) => {
         const card = node("div"); card.className = "match-card";
-        card.appendChild(node("p", count ? count + " article(s) du ticket semblent déjà présents dans « " + outfit.name + " »." : "Une tenue porte un nom proche : « " + outfit.name + " »."));
+        card.appendChild(node("p", "Une tenue porte " + (Couture.normalize(name) === Couture.normalize(outfit.name) ? "le même nom" : "un nom proche") + " : « " + outfit.name + " »."));
         const button = node("button", "Comparer avec « " + outfit.name + " »"); button.type = "button";
         button.addEventListener("click", () => { selected = outfit; choices.clear(); refresh(); });
         card.appendChild(button); target.appendChild(card);
