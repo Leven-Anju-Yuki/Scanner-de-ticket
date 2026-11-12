@@ -1,10 +1,10 @@
-const CACHE_NAME = "tissu-planner-v10";
+const CACHE_NAME = "tissu-planner-v11";
 const FILES_TO_CACHE = [
-  "./", "./index.html", "./manifest.json", "./assets/css/style.css?v=20261111-3",
-  "./assets/js/ocr.js?v=20261111-3", "./assets/js/parser.js?v=20261111-3", "./assets/js/form.js?v=20261111-3",
-  "./assets/js/install.js?v=20261111-3", "./assets/image/favicon_pref_2.png",
-  "./assets/js/history-core.js?v=20261111-3", "./assets/js/history.js?v=20261111-3",
-  "./assets/js/draft.js?v=20261111-3",
+  "./", "./index.html", "./manifest.json", "./assets/css/style.css?v=20261112-1",
+  "./assets/js/ocr.js?v=20261112-1", "./assets/js/parser.js?v=20261112-1", "./assets/js/form.js?v=20261112-1",
+  "./assets/js/install.js?v=20261112-1", "./assets/image/favicon_pref_2.png",
+  "./assets/js/history-core.js?v=20261112-1", "./assets/js/history.js?v=20261112-1",
+  "./assets/js/draft.js?v=20261112-1",
   "./assets/image/icon-192.png", "./assets/image/icon-512.png"
 ];
 self.addEventListener("install", event => {

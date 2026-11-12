@@ -6,13 +6,24 @@ let previewUrl = null;
 async function prepareTicketImage(file) {
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = URL.createObjectURL(file);
-  preview.src = previewUrl;
   preview.hidden = false;
-  await new Promise((resolve, reject) => {
-    preview.onload = resolve;
-    preview.onerror = () => reject(new Error("Format photo illisible. Essaie une image JPG ou PNG."));
-    if (preview.complete && preview.naturalWidth) resolve();
+  const load = source => new Promise((resolve, reject) => {
+    preview.onload = () => { preview.onload = preview.onerror = null; resolve(); };
+    preview.onerror = () => { preview.onload = preview.onerror = null; reject(new Error("Format photo illisible. Essaie une image JPG ou PNG.")); };
+    preview.src = source;
   });
+  try { await load(previewUrl); }
+  catch (_) {
+    // Certains navigateurs intégrés ne décodent pas les URL blob. Relire le
+    // fichier sur l'appareil ; aucune photo n'est envoyée à un serveur.
+    const source = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Impossible de lire cette photo sur cet appareil."));
+      reader.readAsDataURL(file);
+    });
+    await load(source);
+  }
   const ratio = Math.min(2, Math.max(1, 1400 / preview.naturalWidth),
     3200 / Math.max(preview.naturalWidth, preview.naturalHeight));
   const canvas = document.createElement("canvas");
