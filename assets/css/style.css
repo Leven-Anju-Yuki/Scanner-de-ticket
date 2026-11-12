@@ -334,3 +334,7 @@ body { margin: 0; padding: 24px; background: #f5f1e7; }
 .match-card button, #historyReload { min-height: 44px; padding: 10px 14px; border: 1px solid #b39750; border-radius: 8px; background: #fffdf6; color: #423512; cursor: pointer; }
 #historyPanel button { margin: 5px 5px 5px 0; }
 @media print { .duplicate-suggestions { display: none !important; } }
+
+.app-version { color: #7b725f; font-size: .75rem; margin: 6px 0 14px; }
+#appUpdateStatus { overflow-wrap: anywhere; font-size: .9rem; }
+@media print { #appVersion, #appUpdateStatus { display: none !important; } }

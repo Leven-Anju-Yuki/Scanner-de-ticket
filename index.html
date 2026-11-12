@@ -25,20 +25,20 @@
   />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://leven-anju-yuki.github.io/Scanner-de-ticket/" />
-  <meta property="og:image" content="assets/image/icon-512.png" />
+  <meta property="og:image" content="assets/image/favicon_pref_2.png" />
   <meta property="og:site_name" content="Tissu Planner" />
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json?v=20261112-6" />
   <meta name="theme-color" content="#e84393" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="apple-touch-icon" href="assets/image/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/image/install-pref-192.png" />
 
   <!-- ICON -->
-  <link rel="icon" href="assets/image/favicon_pref_2.png" type="image/png" />
+  <link rel="icon" href="assets/image/favicon_pref_2.png?v=20261112-6" type="image/png" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/style.css?v=20261112-5" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20261112-6" />
 </head>
 <body>
 <aside id="rotatePrompt" class="rotate-prompt" role="region" aria-labelledby="rotateTitle">
@@ -50,12 +50,14 @@
   </div>
 </aside>
 
-<header class="app-header"><img class="brand-mark" src="assets/image/favicon_pref.png" width="64" height="64" alt="Emblème du scanner couture"><div><p class="eyebrow">TON ATELIER COUTURE</p><h1>Mes tickets & mes tenues</h1><p>Un ticket, tes articles, puis ton tableau Sheets.</p></div></header>
+<header class="app-header"><img class="brand-mark" src="assets/image/favicon_pref_2.png?v=20261112-6" width="64" height="64" alt="Emblème du scanner couture"><div><p class="eyebrow">TON ATELIER COUTURE</p><h1>Mes tickets & mes tenues</h1><p>Un ticket, tes articles, puis ton tableau Sheets.</p></div></header>
 <button id="installButton" style="display:none;">
   📲 Installer l’application
 </button>
 <p id="installHelp" class="scan-help"></p>
 <button id="updateApp" type="button" hidden>Actualiser l’application (saisie conservée)</button>
+<p id="appUpdateStatus" role="status" aria-live="polite"></p>
+<p id="appVersion" class="app-version">Version 2026.11.12.6</p>
 <p id="networkStatus" role="status" aria-live="polite"></p>
 
 
@@ -152,14 +154,14 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-<script src="assets/js/parser.js?v=20261112-5"></script>
-<script src="assets/js/history-core.js?v=20261112-5"></script>
-<script src="assets/js/form.js?v=20261112-5"></script>
-<script src="assets/js/history.js?v=20261112-5"></script>
+<script src="assets/js/parser.js?v=20261112-6"></script>
+<script src="assets/js/history-core.js?v=20261112-6"></script>
+<script src="assets/js/form.js?v=20261112-6"></script>
+<script src="assets/js/history.js?v=20261112-6"></script>
 <script src="https://accounts.google.com/gsi/client" async defer onload="CoutureHistory.initGoogle()"></script>
-<script src="assets/js/ocr.js?v=20261112-5"></script>
-<script src="assets/js/draft.js?v=20261112-5"></script>
-<script src="assets/js/install.js?v=20261112-5"></script>
-<script src="assets/js/orientation.js?v=20261112-5"></script>
+<script src="assets/js/ocr.js?v=20261112-6"></script>
+<script src="assets/js/draft.js?v=20261112-6"></script>
+<script src="assets/js/install.js?v=20261112-6"></script>
+<script src="assets/js/orientation.js?v=20261112-6"></script>
 </body>
 </html>

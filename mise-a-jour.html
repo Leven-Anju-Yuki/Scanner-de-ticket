@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Actualiser Tissu Planner</title>
+<style>[hidden]{display:none!important}body{margin:0;padding:24px;background:#f5f1e7;color:#251f15;font:16px/1.6 system-ui}main{max-width:520px;margin:8vh auto;padding:28px;background:#fffdf7;border:1px solid #d5bd77;border-radius:18px}img{display:block;width:90px;height:70px;object-fit:contain;margin:auto}h1{font-size:1.5rem}button,a{display:block;padding:14px;border:1px solid #b39750;border-radius:10px;text-align:center}button{width:100%;background:#171510;color:#f0d16a;font-size:1rem;cursor:pointer}small{color:#71644c}</style></head>
+<body><main><img src="assets/image/favicon_pref_2.png?v=20261112-6" alt="Tissu Planner"><h1>Remettre l’application à jour</h1><p>Le brouillon enregistré sur cet appareil est conservé. Cette opération n’envoie rien dans Sheets.</p><p id="status" role="status">Préparation de la mise à jour…</p><button id="retry" type="button">Relancer la mise à jour</button><a id="open" href="index.html?updated=20261112-6" hidden>Ouvrir l’application à jour</a><p><small>Une fois la mise à jour terminée, ferme complètement l’ancienne fenêtre de l’application sur ton téléphone, puis rouvre son icône.</small></p></main>
+<script>
+const TARGET_RELEASE = "20261112-6";
+function activated(worker) {
+ return new Promise((resolve,reject)=>{
+  if(!worker)return reject(Error("Le service de mise à jour est indisponible."));
+  if(worker.state==="activated")return resolve();
+  const timeout=setTimeout(()=>{worker.removeEventListener("statechange",changed);reject(Error("Le téléchargement prend du temps. Vérifie Internet et réessaie."));},30000);
+  function changed(){if(worker.state==="activated"){clearTimeout(timeout);worker.removeEventListener("statechange",changed);resolve();}else if(worker.state==="redundant"){clearTimeout(timeout);worker.removeEventListener("statechange",changed);reject(Error("La mise à jour a été interrompue. Réessaie."));}}
+  worker.addEventListener("statechange",changed);changed();
+ });
+}
+function versionOf(worker) {
+ return new Promise(resolve=>{
+  const channel=new MessageChannel();const timeout=setTimeout(()=>{channel.port1.close();resolve(null);},3000);
+  channel.port1.onmessage=event=>{clearTimeout(timeout);channel.port1.close();resolve(event.data);};
+  worker.postMessage({type:"GET_VERSION"},[channel.port2]);
+ });
+}
+async function recover(){
+ const button=document.getElementById("retry"),status=document.getElementById("status");button.disabled=true;
+ try{
+  if(!navigator.onLine)throw Error("Connecte ton téléphone à Internet puis réessaie.");
+  if(!("serviceWorker" in navigator))throw Error("Ouvre le scanner dans Chrome ou Safari à jour.");
+  status.textContent="Téléchargement de la dernière version…";
+  const registration=await navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"});
+  await registration.update();
+  if(registration.waiting)registration.waiting.postMessage({type:"ACTIVATE_UPDATE"});
+  const worker=registration.installing||registration.waiting||registration.active;
+  await activated(worker);
+  const info=await versionOf(registration.active||worker);
+  if(info?.release!==TARGET_RELEASE)throw Error("La dernière version n’est pas encore accessible. Relance la mise à jour dans un instant.");
+  status.textContent="Application actualisée. Ouverture de ton tableau…";
+  document.getElementById("open").hidden=false;
+  location.replace("./index.html?updated="+TARGET_RELEASE);
+ }catch(error){status.textContent=error.message;}finally{button.disabled=false;}
+}
+document.getElementById("retry").addEventListener("click",recover);recover();
+</script></body></html>

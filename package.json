@@ -2,7 +2,7 @@
   "name": "scanner-tickets-couture",
   "private": true,
   "scripts": {
-    "test": "node tests/regression.cjs && node tests/parser.cjs && node tests/ocr.cjs && node tests/apps-script.cjs && node tests/send-to-sheets.cjs && node tests/google-auth.cjs && node tests/history.cjs && node tests/pwa.cjs && node tests/prepare-image.cjs && node tests/orientation.cjs && node tests/comparison-ui.cjs && node tests/scan-replay.cjs",
+    "test": "node tests/regression.cjs && node tests/parser.cjs && node tests/ocr.cjs && node tests/apps-script.cjs && node tests/send-to-sheets.cjs && node tests/google-auth.cjs && node tests/history.cjs && node tests/pwa.cjs && node tests/prepare-image.cjs && node tests/orientation.cjs && node tests/comparison-ui.cjs && node tests/scan-replay.cjs && node tests/install-update.cjs",
     "test:ocr-image": "node tests/recognize-image.cjs",
     "clasp": "clasp",
     "google:login": "clasp login",
