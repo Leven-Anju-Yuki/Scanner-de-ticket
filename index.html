@@ -38,7 +38,7 @@
   <link rel="icon" href="assets/image/favicon_pref_2.png" type="image/png" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/style.css?v=20261112-3" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20261112-4" />
 </head>
 <body>
 <aside id="rotatePrompt" class="rotate-prompt" role="region" aria-labelledby="rotateTitle">
@@ -50,7 +50,7 @@
   </div>
 </aside>
 
-<header class="app-header"><p class="eyebrow">TON ATELIER COUTURE</p><h1>Mes tickets & mes tenues</h1><p>Un ticket, tes articles, puis ton tableau Sheets.</p></header>
+<header class="app-header"><img class="brand-mark" src="assets/image/favicon_pref.png" width="64" height="64" alt="Emblème du scanner couture"><div><p class="eyebrow">TON ATELIER COUTURE</p><h1>Mes tickets & mes tenues</h1><p>Un ticket, tes articles, puis ton tableau Sheets.</p></div></header>
 <button id="installButton" style="display:none;">
   📲 Installer l’application
 </button>
@@ -74,26 +74,19 @@
     <ul id="ocrWarnings"></ul>
     <pre id="ocrText"></pre>
   </details>
-  <h2 class="step-heading"><span>2</span> Choisir la tenue</h2>
+  <h2 class="step-heading"><span>2</span> Nommer ta tenue</h2>
   <p class="field-help">Touche le nom pour le modifier.</p>
   <div class="tenue-title" contenteditable>
     ✂️ Nom de la tenue
   </div>
-  <details id="historyPanel">
-    <summary>Retrouver une tenue existante et éviter les doublons</summary>
-    <p>Connecte-toi avec ton compte Google pour retrouver tes tableaux. Sur téléphone, ton PC peut être éteint.</p>
-    <button id="historyConnect" type="button" disabled>Se connecter avec Google</button>
-    <button id="historyDisconnect" type="button" hidden>Se déconnecter</button>
-    <p id="historyStatus" role="status" aria-live="polite"></p>
-    <div id="historyMatches"></div>
-  </details>
+
 
   <h2 class="step-heading"><span>3</span> Vérifier les articles</h2>
   <p class="scan-help">Touche une cellule pour corriger. Fais glisser le tableau si certaines colonnes sont masquées.</p>
   <div id="comparisonLayout" class="comparison-layout">
   <section id="historyExisting" class="comparison-pane existing-pane" aria-label="Tableau existant dans Sheets, lecture seule" hidden></section>
   <section class="comparison-pane incoming-pane" aria-labelledby="incomingTitle">
-  <h3 id="incomingTitle">Nouvelle saisie</h3>
+  <h3 id="incomingTitle">Mon ticket</h3>
   <p class="pane-caption">Tes articles à vérifier et corriger avant l’envoi.</p>
   <div class="table-scroll" tabindex="0" role="region" aria-label="Articles modifiables, défilement horizontal"><table class="tenue-table" id="ticketTable">
     <thead>
@@ -137,6 +130,18 @@
   <div id="historyDecisions" class="duplicate-decisions"></div>
   </section>
   </div>
+<section id="duplicateSuggestions" class="duplicate-suggestions" aria-labelledby="duplicateTitle" hidden>
+  <h3 id="duplicateTitle">Correspondances possibles à vérifier</h3>
+  <div id="historyMatches"></div>
+</section>
+<details id="historyPanel">
+  <summary>Vérifier les doublons dans Sheets · facultatif</summary>
+  <p>Ton ticket reste dans le tableau ci-dessus. Connecte-toi pour vérifier si ses articles ou une tenue au nom proche existent déjà.</p>
+  <button id="historyConnect" type="button" disabled>Se connecter avec Google</button>
+  <button id="historyReload" type="button" hidden>Actualiser la recherche de doublons</button>
+  <button id="historyDisconnect" type="button" hidden>Se déconnecter</button>
+  <p id="historyStatus" role="status" aria-live="polite"></p>
+</details>
 <p id="ocrReviewPanel" hidden><label><input type="checkbox" id="ocrReviewed"> J’ai vérifié les articles et les montants avec le ticket.</label></p>
 <div class="save-panel"><span class="save-caption">Tout est prêt ?<small>L’envoi reste manuel.</small></span>
 <button onclick="sendToSheets()" id="sendToSheet">💾 Enregistrer dans Sheets</button>
@@ -147,14 +152,14 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-<script src="assets/js/parser.js?v=20261112-3"></script>
-<script src="assets/js/history-core.js?v=20261112-3"></script>
-<script src="assets/js/form.js?v=20261112-3"></script>
-<script src="assets/js/history.js?v=20261112-3"></script>
+<script src="assets/js/parser.js?v=20261112-4"></script>
+<script src="assets/js/history-core.js?v=20261112-4"></script>
+<script src="assets/js/form.js?v=20261112-4"></script>
+<script src="assets/js/history.js?v=20261112-4"></script>
 <script src="https://accounts.google.com/gsi/client" async defer onload="CoutureHistory.initGoogle()"></script>
-<script src="assets/js/ocr.js?v=20261112-3"></script>
-<script src="assets/js/draft.js?v=20261112-3"></script>
-<script src="assets/js/install.js?v=20261112-3"></script>
-<script src="assets/js/orientation.js?v=20261112-3"></script>
+<script src="assets/js/ocr.js?v=20261112-4"></script>
+<script src="assets/js/draft.js?v=20261112-4"></script>
+<script src="assets/js/install.js?v=20261112-4"></script>
+<script src="assets/js/orientation.js?v=20261112-4"></script>
 </body>
 </html>

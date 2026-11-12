@@ -14,30 +14,47 @@ var CoutureHistory = (function () {
     return JSON.parse(text);
   }
   async function connect() {
+    if (!token()) {
+      byId("historyConnect").hidden = false;
+      byId("historyReload").hidden = true;
+      byId("historyStatus").textContent = "Connecte-toi pour vérifier les doublons de ton ticket.";
+      return;
+    }
     const version = sessionVersion;
     byId("historyStatus").textContent = "Chargement de tes tableaux…";
     try {
       const result = await api({ action: "history" });
       if (version !== sessionVersion || !token()) return;
       outfits = result.outfits;
+      byId("historyConnect").hidden = true;
+      byId("historyReload").hidden = false;
       byId("historyDisconnect").hidden = false;
       if (selected) selected = outfits.find(o => o.id === selected.id) || null;
-      byId("historyStatus").textContent = outfits.length + " tableaux disponibles. Saisis le nom de la tenue pour chercher.";
+      byId("historyStatus").textContent = "Connecté à Google · " + outfits.length + " tableaux vérifiés. Ton ticket reste la nouvelle saisie ; compare seulement si une correspondance t’intéresse.";
       renderMatches(); refresh();
     } catch (error) { if (version === sessionVersion) byId("historyStatus").textContent = "Historique indisponible : " + error.message; }
   }
   function renderMatches() {
     const name = document.querySelector(".tenue-title").textContent.replace(/^✂️\s*/, "").trim();
     const target = byId("historyMatches"); target.replaceChildren();
-    if (!name || name === "Nom de la tenue") return;
-    outfits.map(o => ({ outfit: o, score: Couture.nameScore(name, o.name) })).filter(o => o.score >= 0.55)
-      .sort((a, b) => b.score - a.score).slice(0, 5).forEach(({ outfit }) => {
-        const button = node("button", "Voir « " + outfit.name + " »"); button.type = "button";
+    const rows = canonicalRows().filter(row => row[0] || row[1]);
+    const named = name && name !== "Nom de la tenue";
+    const matches = outfits.map(outfit => ({ outfit,
+      score: named ? Couture.nameScore(name, outfit.name) : 0,
+      count: rows.filter(row => Couture.duplicates(row, outfit.rows).length).length
+    })).filter(match => match.count || match.score >= 0.55)
+      .sort((a, b) => b.count - a.count || b.score - a.score).slice(0, 5);
+    byId("duplicateSuggestions").hidden = !matches.length;
+    matches.forEach(({ outfit, count }) => {
+        const card = node("div"); card.className = "match-card";
+        card.appendChild(node("p", count ? count + " article(s) du ticket semblent déjà présents dans « " + outfit.name + " »." : "Une tenue porte un nom proche : « " + outfit.name + " »."));
+        const button = node("button", "Comparer avec « " + outfit.name + " »"); button.type = "button";
         button.addEventListener("click", () => { selected = outfit; choices.clear(); refresh(); });
-        target.appendChild(button);
+        card.appendChild(button); target.appendChild(card);
       });
   }
   function refresh() {
+    renderMatches();
     const container = byId("historyExisting");
     const previousScroll = container.querySelector(".table-scroll");
     const scrollLeft = previousScroll?.scrollLeft || 0, scrollTop = previousScroll?.scrollTop || 0;
@@ -45,11 +62,12 @@ var CoutureHistory = (function () {
     const decisions = byId("historyDecisions"); decisions.replaceChildren();
     container.hidden = !selected;
     byId("comparisonLayout").classList.toggle("has-existing", Boolean(selected));
+    byId("incomingTitle").textContent = selected ? "Nouvelle saisie" : "Mon ticket";
     if (!selected) return;
     container.appendChild(node("h3", "Déjà dans Sheets : " + selected.name));
     const caption = node("p", "Lecture seule · Compare avec la nouvelle saisie à droite. Les lignes repérées ont un doublon possible.");
     caption.className = "pane-caption"; container.appendChild(caption);
-    const cancel = node("button", "Créer plutôt un nouveau tableau"); cancel.type = "button";
+    const cancel = node("button", "Fermer la comparaison · garder mon ticket"); cancel.type = "button";
     cancel.addEventListener("click", () => { selected = null; choices.clear(); refresh(); });
     const scroll = node("div"); scroll.className = "table-scroll";
     const table = node("table"); table.className = "tenue-table";
@@ -136,9 +154,12 @@ var CoutureHistory = (function () {
     googleToken = ""; expiresAt = 0; outfits = []; selected = null; choices.clear(); lastSaved = "";
     renderMatches(); refresh();
     byId("historyDisconnect").hidden = true;
+    byId("historyConnect").hidden = false;
+    byId("historyReload").hidden = true;
     byId("historyStatus").textContent = "Déconnecté. Tes tableaux ont été masqués.";
   }
   byId("historyConnect").addEventListener("click", () => { if (tokenClient) tokenClient.requestAccessToken({ prompt: "select_account" }); });
+  byId("historyReload").addEventListener("click", connect);
   byId("historyDisconnect").addEventListener("click", disconnect);
   document.querySelector(".tenue-title").addEventListener("input", renderMatches);
   document.querySelector("#ticketTable tbody").addEventListener("input", refresh);

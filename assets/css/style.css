@@ -322,3 +322,15 @@ body { margin: 0; padding: 24px; background: #f5f1e7; }
 .has-existing .comparison-pane > h3 { min-height: 2.6em; line-height: 1.3; }
 .has-existing .pane-caption { min-height: 4.5em; }
 .existing-pane > button { margin-top: 14px; padding: 10px; border: 1px solid #c7ba9e; border-radius: 8px; background: white; }
+
+.app-header { display: flex; align-items: center; gap: 16px; }
+.app-header > div { min-width: 0; }
+.brand-mark { flex: 0 0 64px; object-fit: contain; border-radius: 12px; background: #0a0a0a; padding: 5px; }
+.duplicate-suggestions { margin-top: 18px; padding: 16px; border: 1px solid #ddc681; border-radius: 12px; background: #fff9e7; }
+.duplicate-suggestions > h3 { font-size: 1rem; margin: 0 0 12px; }
+.match-card { padding: 10px 0; }
+.match-card + .match-card { border-top: 1px solid #e5d9bb; }
+.match-card p { margin: 0 0 8px; line-height: 1.5; }
+.match-card button, #historyReload { min-height: 44px; padding: 10px 14px; border: 1px solid #b39750; border-radius: 8px; background: #fffdf6; color: #423512; cursor: pointer; }
+#historyPanel button { margin: 5px 5px 5px 0; }
+@media print { .duplicate-suggestions { display: none !important; } }

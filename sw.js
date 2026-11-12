@@ -1,10 +1,10 @@
-const CACHE_NAME = "tissu-planner-v13";
+const CACHE_NAME = "tissu-planner-v14";
 const FILES_TO_CACHE = [
-  "./", "./index.html", "./manifest.json", "./assets/css/style.css?v=20261112-3",
-  "./assets/js/ocr.js?v=20261112-3", "./assets/js/parser.js?v=20261112-3", "./assets/js/form.js?v=20261112-3",
-  "./assets/js/install.js?v=20261112-3", "./assets/image/favicon_pref_2.png",
-  "./assets/js/history-core.js?v=20261112-3", "./assets/js/history.js?v=20261112-3",
-  "./assets/js/draft.js?v=20261112-3", "./assets/js/orientation.js?v=20261112-3",
+  "./", "./index.html", "./manifest.json", "./assets/css/style.css?v=20261112-4",
+  "./assets/js/ocr.js?v=20261112-4", "./assets/js/parser.js?v=20261112-4", "./assets/js/form.js?v=20261112-4",
+  "./assets/js/install.js?v=20261112-4", "./assets/image/favicon_pref_2.png", "./assets/image/favicon_pref.png",
+  "./assets/js/history-core.js?v=20261112-4", "./assets/js/history.js?v=20261112-4",
+  "./assets/js/draft.js?v=20261112-4", "./assets/js/orientation.js?v=20261112-4",
   "./assets/image/icon-192.png", "./assets/image/icon-512.png"
 ];
 self.addEventListener("install", event => {
