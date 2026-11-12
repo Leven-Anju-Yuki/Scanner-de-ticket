@@ -38,24 +38,35 @@ var CoutureHistory = (function () {
       });
   }
   function refresh() {
-    const container = byId("historyExisting"); container.replaceChildren();
+    const container = byId("historyExisting");
+    const previousScroll = container.querySelector(".table-scroll");
+    const scrollLeft = previousScroll?.scrollLeft || 0, scrollTop = previousScroll?.scrollTop || 0;
+    container.replaceChildren();
+    const decisions = byId("historyDecisions"); decisions.replaceChildren();
+    container.hidden = !selected;
+    byId("comparisonLayout").classList.toggle("has-existing", Boolean(selected));
     if (!selected) return;
-    container.appendChild(node("h3", "Ajouter à : " + selected.name));
+    container.appendChild(node("h3", "Déjà dans Sheets : " + selected.name));
+    const caption = node("p", "Lecture seule · Compare avec la nouvelle saisie à droite. Les lignes repérées ont un doublon possible.");
+    caption.className = "pane-caption"; container.appendChild(caption);
     const cancel = node("button", "Créer plutôt un nouveau tableau"); cancel.type = "button";
     cancel.addEventListener("click", () => { selected = null; choices.clear(); refresh(); });
-    container.appendChild(cancel);
     const scroll = node("div"); scroll.className = "table-scroll";
     const table = node("table"); table.className = "tenue-table";
     const head = node("tr");
-    ["Nom", "Référence", "Largeur (cm)", "Longueur / quantité", "Prix payé", "Tarif", "Note"].forEach(t => head.appendChild(node("th", t)));
+    ["Nom", "Référence", "Largeur (cm)", "Longueur / quantité", "Tarif", "Prix payé", "Note"].forEach(t => head.appendChild(node("th", t)));
     table.appendChild(head);
+    const rows = canonicalRows();
+    const matchedRows = new Set(rows.flatMap(row => Couture.duplicates(row, selected.rows).map(item => item.row)));
     selected.rows.forEach(item => {
       const tr = node("tr");
-      [...item.values, item.note].forEach(text => tr.appendChild(node("td", text)));
+      if (matchedRows.has(item.row)) tr.className = "existing-match";
+      const values = item.values;
+      [values[0], values[1], values[2], values[3], values[5], values[4], item.note].forEach(text => tr.appendChild(node("td", text)));
       table.appendChild(tr);
     });
-    scroll.appendChild(table); container.appendChild(scroll);
-    const rows = canonicalRows();
+    scroll.appendChild(table); container.appendChild(scroll); container.appendChild(cancel);
+    scroll.scrollLeft = scrollLeft; scroll.scrollTop = scrollTop;
     let fresh = 0;
     rows.forEach((row, index) => {
       const candidates = Couture.duplicates(row, selected.rows);
@@ -68,9 +79,10 @@ var CoutureHistory = (function () {
       for (const [value, text] of options) { const option = node("option", text); option.value = value; select.appendChild(option); }
       select.value = choices.get(key) || "";
       select.addEventListener("change", () => choices.set(key, select.value));
-      label.appendChild(select); container.appendChild(label);
+      label.appendChild(select); decisions.appendChild(label);
     });
-    container.appendChild(node("p", fresh + " article(s) nouveau(x) seront ajoutés. Les doublons attendent ton choix. Les notes existantes sont conservées."));
+    decisions.prepend(node("h4", "Choisir les articles à ajouter"));
+    decisions.appendChild(node("p", fresh + " article(s) nouveau(x) seront ajoutés. Les doublons attendent ton choix. Les notes existantes sont conservées."));
   }
   function prepare(rows) {
     if (!selected) return {};

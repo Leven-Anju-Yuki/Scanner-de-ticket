@@ -297,3 +297,28 @@ body { margin: 0; padding: 24px; background: #f5f1e7; }
   .app-header, .step-heading, .field-help, .rotate-prompt, #historyPanel, .save-panel, #installHelp, #networkStatus { display: none !important; }
   .table-scroll { border: 0; }
 }
+
+/* Comparaison de la tenue existante et de la nouvelle saisie. */
+.comparison-layout { min-width: 0; }
+.comparison-layout.has-existing { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.comparison-pane { min-width: 0; }
+.comparison-pane > h3 { margin: 0 0 8px; font-size: 1rem; }
+.pane-caption { font-size: .85rem; color: #6e6453; line-height: 1.5; margin: 0 0 14px; }
+.has-existing .comparison-pane { padding: 14px; border: 1px solid #d8cdb4; border-radius: 14px; }
+.existing-pane { background: #f0eee7; }
+.incoming-pane { background: #fffdf7; }
+.has-existing .table-scroll { max-height: 65vh; overflow: auto; }
+.has-existing .tenue-table { min-width: 760px; }
+.has-existing .tenue-table th { position: sticky; top: 0; z-index: 1; }
+.has-existing .tenue-table td { font-size: .9rem; }
+.existing-match td { background: #fff0b6; }
+.duplicate-decisions:not(:empty) { border: 1px solid #d8b953; background: #fff8de; border-radius: 10px; padding: 12px; margin-top: 14px; }
+.duplicate-decisions h4 { margin: 0 0 12px; font-size: .95rem; }
+.duplicate-decisions label { display: block; margin: 12px 0; line-height: 1.5; font-size: .9rem; }
+.duplicate-decisions select { display: block; width: 100%; min-height: 44px; margin-top: 6px; font-size: .9rem; }
+@media (max-width: 1000px) { .comparison-layout.has-existing { gap: 10px; } .has-existing .comparison-pane { padding: 10px; } }
+@media print { .comparison-layout.has-existing { display: block; } .existing-pane, .duplicate-decisions { display: none !important; } .has-existing .table-scroll { max-height: none; overflow: visible; } }
+
+.has-existing .comparison-pane > h3 { min-height: 2.6em; line-height: 1.3; }
+.has-existing .pane-caption { min-height: 4.5em; }
+.existing-pane > button { margin-top: 14px; padding: 10px; border: 1px solid #c7ba9e; border-radius: 8px; background: white; }

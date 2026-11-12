@@ -38,7 +38,7 @@
   <link rel="icon" href="assets/image/favicon_pref_2.png" type="image/png" />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/style.css?v=20261112-2" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20261112-3" />
 </head>
 <body>
 <aside id="rotatePrompt" class="rotate-prompt" role="region" aria-labelledby="rotateTitle">
@@ -86,11 +86,15 @@
     <button id="historyDisconnect" type="button" hidden>Se déconnecter</button>
     <p id="historyStatus" role="status" aria-live="polite"></p>
     <div id="historyMatches"></div>
-    <div id="historyExisting"></div>
   </details>
 
   <h2 class="step-heading"><span>3</span> Vérifier les articles</h2>
   <p class="scan-help">Touche une cellule pour corriger. Fais glisser le tableau si certaines colonnes sont masquées.</p>
+  <div id="comparisonLayout" class="comparison-layout">
+  <section id="historyExisting" class="comparison-pane existing-pane" aria-label="Tableau existant dans Sheets, lecture seule" hidden></section>
+  <section class="comparison-pane incoming-pane" aria-labelledby="incomingTitle">
+  <h3 id="incomingTitle">Nouvelle saisie</h3>
+  <p class="pane-caption">Tes articles à vérifier et corriger avant l’envoi.</p>
   <div class="table-scroll" tabindex="0" role="region" aria-label="Articles modifiables, défilement horizontal"><table class="tenue-table" id="ticketTable">
     <thead>
       <tr>
@@ -130,6 +134,9 @@
   </table></div>
 
   <button class="add-row">➕ Ajouter une ligne</button><br>
+  <div id="historyDecisions" class="duplicate-decisions"></div>
+  </section>
+  </div>
 <p id="ocrReviewPanel" hidden><label><input type="checkbox" id="ocrReviewed"> J’ai vérifié les articles et les montants avec le ticket.</label></p>
 <div class="save-panel"><span class="save-caption">Tout est prêt ?<small>L’envoi reste manuel.</small></span>
 <button onclick="sendToSheets()" id="sendToSheet">💾 Enregistrer dans Sheets</button>
@@ -140,14 +147,14 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-<script src="assets/js/parser.js?v=20261112-2"></script>
-<script src="assets/js/history-core.js?v=20261112-2"></script>
-<script src="assets/js/form.js?v=20261112-2"></script>
-<script src="assets/js/history.js?v=20261112-2"></script>
+<script src="assets/js/parser.js?v=20261112-3"></script>
+<script src="assets/js/history-core.js?v=20261112-3"></script>
+<script src="assets/js/form.js?v=20261112-3"></script>
+<script src="assets/js/history.js?v=20261112-3"></script>
 <script src="https://accounts.google.com/gsi/client" async defer onload="CoutureHistory.initGoogle()"></script>
-<script src="assets/js/ocr.js?v=20261112-2"></script>
-<script src="assets/js/draft.js?v=20261112-2"></script>
-<script src="assets/js/install.js?v=20261112-2"></script>
-<script src="assets/js/orientation.js?v=20261112-2"></script>
+<script src="assets/js/ocr.js?v=20261112-3"></script>
+<script src="assets/js/draft.js?v=20261112-3"></script>
+<script src="assets/js/install.js?v=20261112-3"></script>
+<script src="assets/js/orientation.js?v=20261112-3"></script>
 </body>
 </html>
