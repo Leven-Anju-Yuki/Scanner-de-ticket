@@ -4,7 +4,8 @@ var CoutureDraft = (function () {
     try {
       const rows = Array.from(tbody.querySelectorAll("tr"), row => ({
         values: Array.from(row.children).slice(0, 6).map(cell => cell.textContent),
-        manual: row.dataset.manualPrice === "true"
+        manual: row.dataset.manualPrice === "true",
+        receiptKey: row.dataset.receiptKey || "", receiptFileKey: row.dataset.receiptFileKey || ""
       }));
       localStorage.setItem(key, JSON.stringify({ title: title.textContent, rows,
         review: !document.getElementById("ocrReviewPanel").hidden }));
@@ -16,7 +17,12 @@ var CoutureDraft = (function () {
     if (draft && Array.isArray(draft.rows) && draft.rows.length <= 500 &&
       draft.rows.every(row => Array.isArray(row.values) && row.values.length === 6 && row.values.every(v => typeof v === "string"))) {
       tbody.replaceChildren();
-      draft.rows.forEach(item => { const row = addRow(item.values); if (item.manual) row.dataset.manualPrice = "true"; });
+      draft.rows.forEach(item => {
+        const row = addRow(item.values); if (item.manual) row.dataset.manualPrice = "true";
+        for (const key of ["receiptKey", "receiptFileKey"]) {
+          if (typeof item[key] === "string" && item[key].length <= 120) row.dataset[key] = item[key];
+        }
+      });
       if (!draft.rows.length) addRow();
       if (typeof draft.title === "string") title.textContent = draft.title;
       if (draft.review) { document.getElementById("ocrReviewPanel").hidden = false; document.getElementById("ocrReviewed").checked = false; }

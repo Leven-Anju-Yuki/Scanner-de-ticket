@@ -17,8 +17,10 @@ class Element {
  assert.equal(ids.historyConnect.hidden,true,'Connexion masquée après succès');
  assert.equal(ids.historyReload.hidden,false);
  assert.equal(ids.historyExisting.hidden,true,'La connexion ne sélectionne pas un ancien tableau');
- assert.equal(ids.duplicateSuggestions.hidden,false,'Les articles du scan suffisent, sans nom de tenue');
- assert.match(ids.historyMatches.children[0].children[0].textContent,/article\(s\)/);
+ assert.equal(ids.duplicateSuggestions.hidden,true,'Le même tissu dans une autre tenue ne déclenche rien');
+ title.textContent='Robe';ctx.CoutureHistory.refresh();
+ assert.equal(ids.duplicateSuggestions.hidden,false,'Seul le nom de tenue déclenche la proposition');
+ assert.match(ids.historyMatches.children[0].children[0].textContent,/même nom/);
  ids.historyMatches.children[0].children[1].events.click();
  assert.equal(ids.historyExisting.hidden,false);assert.ok(ids.comparisonLayout.classes.has('has-existing'));
  assert.match(ids.historyExisting.children[0].textContent,/Déjà dans Sheets/);

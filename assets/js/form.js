@@ -67,6 +67,8 @@ function fillForm(data) {
   if (data.prix || data.ocr) row.dataset.manualPrice = "true";
   if (data.ocr) {
     row.dataset.ocr = "true";
+    if (data.receiptKey) row.dataset.receiptKey = data.receiptKey;
+    if (data.receiptFileKey) row.dataset.receiptFileKey = data.receiptFileKey;
     row.title = "Texte du ticket :\n" + (data.source || "");
     const badge = document.createElement("span");
     badge.className = "ocr-row-note";

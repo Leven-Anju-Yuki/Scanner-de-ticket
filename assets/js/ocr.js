@@ -37,10 +37,58 @@ async function prepareTicketImage(file) {
   return canvas;
 }
 
-function importReceipt(text, confidence) {
+function receiptIdentity(text) {
+  const normalized = String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/\s+/g, " ").trim();
+  const date = normalized.match(/\b(\d{2}[/.]\d{2}[/.]\d{4})\s+(\d{1,2}:\d{2})\b/);
+  const number = normalized.match(/CAISSE\s*(\d+)\s*[-–:]?\s*NUMERO\s*(\d+)/);
+  if (date && number) return "ticket:" + [date[1], date[2], number[1], number[2]].join(":");
+  let hash = 2166136261;
+  for (let i = 0; i < normalized.length; i++) hash = Math.imul(hash ^ normalized.charCodeAt(i), 16777619);
+  return "text:" + normalized.length + ":" + (hash >>> 0).toString(16);
+}
+function existingReceipt(key, fileKey) {
+  return Array.from(tbody.querySelectorAll("tr")).some(row =>
+    (key && row.dataset.receiptKey === key) || (fileKey && row.dataset.receiptFileKey === fileKey));
+}
+function alreadyImported() {
+  debug.textContent = "Ce ticket est déjà dans ton tableau. Aucune ligne ajoutée ; tes corrections sont conservées.";
+  if (typeof CoutureDraft !== "undefined") CoutureDraft.save();
+  return 0;
+}
+function legacyReceiptRows(articles) {
+  // Migration des brouillons créés avant le suivi des scans. Comparaison de
+  // l'ensemble des lignes, avec leur multiplicité ; jamais des autres tenues.
+  const fingerprint = values => {
+    const ref = String(values[1] || "").replace(/\D/g, "") || String(values[0] || "").toLowerCase().replace(/\s+/g, " ").trim();
+    const amount = readNumber(values[3]), paid = readNumber(values[5]);
+    return ref && amount !== null && paid !== null ? JSON.stringify([ref, amount, paid]) : "";
+  };
+  const available = new Map();
+  for (const row of tbody.querySelectorAll("tr")) {
+    if (row.dataset.receiptKey || row.dataset.receiptFileKey) continue;
+    const key = fingerprint(Array.from(row.children).slice(0, 6).map(cell => cell.textContent));
+    if (key) { if (!available.has(key)) available.set(key, []); available.get(key).push(row); }
+  }
+  const found = [];
+  for (const article of articles) {
+    const key = fingerprint([article.nom, article.reference, article.largeur, article.taille, article.prixUnitaire, article.prix]);
+    const candidates = available.get(key);
+    if (!candidates?.length) return null;
+    found.push(candidates.pop());
+  }
+  return found.length ? found : null;
+}
+function importReceipt(text, confidence, fileKey = "") {
   const receipt = parseReceipt(text, confidence);
+  const key = receiptIdentity(text);
+  if (existingReceipt(key, fileKey)) return alreadyImported();
+  const legacy = legacyReceiptRows(receipt.articles);
+  if (legacy) {
+    legacy.forEach(row => { row.dataset.receiptKey = key; if (fileKey) row.dataset.receiptFileKey = fileKey; });
+    return alreadyImported();
+  }
   let added = 0;
-  receipt.articles.forEach(article => { if (fillForm(article)) added++; });
+  receipt.articles.forEach(article => { if (fillForm({ ...article, receiptKey: key, receiptFileKey: fileKey })) added++; });
   const warnings = document.getElementById("ocrWarnings");
   warnings.replaceChildren();
   const messages = [...receipt.warnings];
@@ -63,6 +111,7 @@ function importReceipt(text, confidence) {
   debug.textContent = added
     ? added + " article(s) proposé(s). Vérifie les noms, mesures et prix avant l’envoi."
     : "Aucun article identifiable. Consulte le texte lu et saisis les informations manuellement.";
+  if (typeof CoutureDraft !== "undefined") CoutureDraft.save();
   return added;
 }
 
@@ -93,6 +142,12 @@ async function readTicket(event) {
   sendButton.disabled = true;
   debug.textContent = "Préparation de la photo…";
   try {
+    let fileKey = "";
+    if (typeof crypto !== "undefined" && crypto.subtle && typeof file.arrayBuffer === "function") {
+      const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+      fileKey = "file:" + Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+      if (existingReceipt("", fileKey)) { alreadyImported(); return; }
+    }
     if (typeof Tesseract === "undefined") throw new Error("Le lecteur OCR n’est pas chargé. Vérifie la connexion Internet.");
     const image = await prepareTicketImage(file);
     worker = await Tesseract.createWorker("fra", 1, {
@@ -110,7 +165,7 @@ async function readTicket(event) {
       const score = data => parseReceipt(data.text, data.confidence).articles.reduce((n, a) => n + (a.prix ? 3 : 0) + (a.taille ? 2 : 0) + (a.reference ? 1 : 0), 0);
       if (score(retry.data) >= score(result.data)) result = retry;
     }
-    importReceipt(result.data.text, result.data.confidence);
+    importReceipt(result.data.text, result.data.confidence, fileKey);
   } catch (error) {
     debug.textContent = "Lecture impossible : " + error.message + " Tu peux toujours saisir les articles à la main.";
   } finally {
