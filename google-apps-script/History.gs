@@ -1,3 +1,5 @@
+// Empreinte du compte propriétaire autorisé ; aucun jeton ni secret client.
+const HISTORY_ALLOWED_ACCOUNT_HASH = "42b49059cd65dcdccbef3ea41b32907116547c3d2396aa690a8688e3a743e1e7";
 function historyHash(value) {
   return Array.from(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(value)),
     byte => ((byte + 256) % 256).toString(16).padStart(2, "0")).join("");
@@ -15,9 +17,8 @@ function authorizeHistory(data) {
   } catch (_) { throw new Error("Le propriétaire doit autoriser les appels Google du script mis à jour."); }
   if (response.getResponseCode() !== 200) throw new Error("Connexion Google expirée ou refusée. Reconnecte-toi.");
   const identity = JSON.parse(response.getContentText());
-  const owner = Session.getEffectiveUser().getEmail().toLowerCase();
-  if (!owner || !identity.sub || identity.email_verified !== true ||
-      String(identity.email || "").toLowerCase() !== owner)
+  if (!identity.sub || identity.email_verified !== true ||
+      historyHash(String(identity.email || "").toLowerCase()) !== HISTORY_ALLOWED_ACCOUNT_HASH)
     throw new Error("Ce compte Google n’a pas accès à ce classeur.");
 }
 function readOutfits(sheet) {

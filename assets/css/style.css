@@ -193,6 +193,11 @@ input, select, [contenteditable] { font-size: 16px; }
 #historyExisting select { width: 100%; min-height: 44px; }
 #historyMatches button { margin: 5px; }
 #historyPanel { margin: 16px 0; }
+#historyStatus, #saveStatus, #networkStatus { overflow-wrap: anywhere; }
+#historyConnect, #historyDisconnect, #updateApp {
+  padding: 12px 16px; border: 1px solid var(--gold); border-radius: 12px;
+  background: var(--black); color: var(--gold-light); cursor: pointer;
+}
 #historyPanel summary { padding: 10px 0; cursor: pointer; }
 [hidden] { display: none !important; }
 #ocrDebug { white-space: pre-wrap; overflow-wrap: anywhere; }

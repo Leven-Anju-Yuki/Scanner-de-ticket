@@ -39,8 +39,9 @@ Les étapes ci-dessous décrivent une future reconfiguration éventuelle.
    doivent être publiés avant que le parcours fonctionne sur le site en ligne.
 
 Le serveur utilise l'endpoint Google UserInfo pour vérifier le jeton OAuth et
-le courriel vérifié, et n'autorise que le compte du propriétaire exécutant le
-déploiement Apps Script. L'authentification ne demande que `openid email`.
+le courriel vérifié, et compare son empreinte au compte autorisé du scanner
+(`HISTORY_ALLOWED_ACCOUNT_HASH`). Ce contrôle ne repose pas sur l'identité
+annoncée par le navigateur. L'authentification ne demande que `openid email`.
 Elle ne demande pas l'accès à Gmail ou à tout Drive. Les jetons restent en mémoire,
 ne sont pas mis dans les URL ou le stockage local et expirent ; une nouvelle
 connexion est alors nécessaire. Déconnexion masque les tableaux de cette page.

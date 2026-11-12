@@ -61,17 +61,17 @@ async function readTicket(event) {
   if (!file) return;
   if (document.getElementById("sendToSheet").disabled) {
     debug.textContent = "Attends la fin de l’enregistrement avant de scanner un autre ticket.";
-    input.value = "";
+    activeInput.value = "";
     return;
   }
   if (file.type && !file.type.startsWith("image/")) {
     debug.textContent = "Choisis une photo du ticket (JPG ou PNG).";
-    input.value = "";
+    activeInput.value = "";
     return;
   }
   if (file.size > 20 * 1024 * 1024) {
     debug.textContent = "Photo trop volumineuse (maximum 20 Mo). Recadre ou réduis la photo.";
-    input.value = "";
+    activeInput.value = "";
     return;
   }
   let worker;

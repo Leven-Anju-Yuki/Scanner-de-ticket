@@ -8,7 +8,7 @@ const GOOGLE_WEB_CLIENT_ID = "882018689960-t5uercolas7p2m71od4d37ie018i9pbo.apps
 // Diagnostic public Google uniquement : aucune écriture dans Sheets.
 function authorizeGoogleConnection() {
   const response = UrlFetchApp.fetch("https://accounts.google.com/.well-known/openid-configuration");
-  if (response.getResponseCode() !== 200 || !Session.getEffectiveUser().getEmail()) {
+  if (response.getResponseCode() !== 200) {
     throw new Error("Autorisation Google à vérifier.");
   }
   console.log("Appels Google autorisés. Retourne sur le scanner et reconnecte-toi.");

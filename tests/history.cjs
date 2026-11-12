@@ -25,7 +25,7 @@ function harness() {
  setNumberFormat(){return range;},copyFormatToRange(){}
  };return range;}};
  const ctx=vm.createContext({Couture,console,Session:{getEffectiveUser:()=>({getEmail:()=> 'owner@gmail.com'})},UrlFetchApp:{fetch:()=>({getResponseCode:()=>200,getContentText:()=>JSON.stringify({sub:'owner',email:'owner@gmail.com',email_verified:true})})},Utilities:{DigestAlgorithm:{SHA_256:'sha256'},computeDigest:(_,v)=>crypto.createHash('sha256').update(v).digest()},PropertiesService:{},ContentService:{}});
- vm.runInContext(fs.readFileSync('google-apps-script/Code.gs','utf8')+'\n'+fs.readFileSync('google-apps-script/History.gs','utf8'),ctx);
+ vm.runInContext(fs.readFileSync('google-apps-script/Code.gs','utf8')+'\n'+fs.readFileSync('google-apps-script/History.gs','utf8').replace(/const HISTORY_ALLOWED_ACCOUNT_HASH = [^;]+;/, 'const HISTORY_ALLOWED_ACCOUNT_HASH = '+JSON.stringify(crypto.createHash('sha256').update('owner@gmail.com').digest('hex'))+';'),ctx);
  const block=ctx.readOutfits(sheet)[0];
  const payload={googleAccessToken:'valid',targetId:block.id,targetVersion:block.version,rows:[['Tissu','R1',140,150,3,2],['Bouton','B1','',2,1,0.5]],decisions:[{action:'sum',row:2},{action:'add'}]};
  return {ctx,sheet,cells,payload,writes:()=>writes};

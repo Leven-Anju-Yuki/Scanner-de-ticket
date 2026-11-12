@@ -1,9 +1,11 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
+const crypto = require('node:crypto');
 let status = 200, calls = 0, owner = 'owner@gmail.com';
 let identity = { sub: 'google-subject', email: owner, email_verified: true };
 const context = vm.createContext({
+  Utilities: { DigestAlgorithm: {SHA_256:"sha256"}, computeDigest: (_, value) => crypto.createHash("sha256").update(value).digest() },
   Session: { getEffectiveUser: () => ({ getEmail: () => owner }) },
   UrlFetchApp: { fetch(url, options) {
     calls++;
@@ -13,7 +15,7 @@ const context = vm.createContext({
     return { getResponseCode: () => status, getContentText: () => JSON.stringify(identity) };
   } }
 });
-vm.runInContext(fs.readFileSync('google-apps-script/History.gs', 'utf8'), context);
+vm.runInContext(fs.readFileSync('google-apps-script/History.gs', 'utf8').replace(/const HISTORY_ALLOWED_ACCOUNT_HASH = [^;]+;/, 'const HISTORY_ALLOWED_ACCOUNT_HASH = '+JSON.stringify(crypto.createHash('sha256').update('owner@gmail.com').digest('hex'))+';'), context);
 const authorize = payload => context.authorizeHistory(payload);
 assert.throws(() => authorize({}), /Google/);
 assert.throws(() => authorize({ accessCode: 'old-private-code' }), /Google/);
@@ -29,7 +31,7 @@ identity.email = owner; identity.email_verified = false;
 assert.throws(() => authorize({ googleAccessToken: 'valid-token' }), /pas accès/);
 identity.email_verified = true; delete identity.sub;
 assert.throws(() => authorize({ googleAccessToken: 'valid-token' }), /pas accès/);
-identity.sub = 'google-subject'; owner = '';
+identity.sub = 'google-subject'; identity.email = '';
 assert.throws(() => authorize({ googleAccessToken: 'valid-token' }), /pas accès/);
 
 // Le jeton est exclu de l'identité persistante de soumission.
